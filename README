@@ -1,0 +1,5 @@
+This is a mirror of http://www.vim.org/scripts/script.php?script_id=1937
+
+Syntax highlighting for the XML User interface Language (XUL) a.k.a. eXtensible User interface Language.  Based on Nicolai Nespor's xul.vim v0.5.  Follows XUL's reference at http://developer.mozilla.org/en/docs/XUL_Reference.
+
+Also available at http://bioinf.ibun.unal.edu.co/~miguel/?id=5
