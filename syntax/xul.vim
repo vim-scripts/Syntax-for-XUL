@@ -10,7 +10,7 @@
 "		- A lot of new XUL-Keywords and ATTs
 "		- Shows attributes syntax by default
 "		- Special Attribute xulDev created for debug
-" Bugs:		- 2 new bugs! at XUL-Script :(
+" Bugs:		- 1 bug! at XUL-Script :(
 " URL:          http://bioinf.ibun.unal.edu.co/~miguel/scripts/xul.vim
 " 		Nikolai's script:
 " 		http://www.unet.univie.ac.at/~a9600989/vim/xul.vim (not longer exists)
@@ -57,16 +57,14 @@ syn cluster xmlTagHook add=xulKW
 " XUL-Script
 " 
 syn cluster xmlRegionHook add=xulScript
-syn region xulScript start=+<script[^>]*>+ keepend end=+</script>+me=s-1 contains=@xulJavaScript,scriptTag
-" Little bug: I had to let the starting < unhld, because it matches as
-" xmlError.  The other option was to remove lc=1 after start pattern and xmlError
-" from content, but I think is much more handy to have xmlErrors alerts than a
-" cute < fuction-colored.  Anyway I still works on it, any ideas?
-" Other bug: When one types </script> inside script (into an String, for
+syn region xulScript start=+<script[^>]*>+ keepend end=+</script>+me=s-1 contains=@xulJavaScript,scriptTag,openScriptTag
+syn match openScriptTag "^<" contained
+" Bug: When one types </script> inside script (into an String, for
 " instance) it matches and closes the script, but xul won't close it.  Again,
 " any ideas?
 syn region scriptTag start=+<script+lc=1 end=+>+ contained contains=xmlError,xmlTagName,xmlAttrib,xmlEqual,xmlString,@xmlStartTagHook
 XulHiLink scriptTag xmlTag
+XulHiLink openScriptTag xmlTag
 
 " if attribute highlighting is NOT disabled
 "
@@ -84,16 +82,17 @@ if !exists("g:nohl_xul_atts")
   XulHiLink xulJavaScriptStringSQ String
   XulHiLink xulJavaScriptStringDQ String
 
-  " set a javascript cluster special for xulScriptIn, Warning: it doesn't
-  " contain all the elements in javascript.vim
-  syn cluster xulJavaScriptIn add=javaScriptCommentTodo,javaScriptLineComment,javaScriptCommentSkip,javaScriptComment,javaScriptSpecial
-  syn cluster xulJavaScriptIn add=javaScriptSpecialCharacter,javaScriptNumber,javaScriptRegexpString
-  syn cluster xulJavaScriptIn add=javaScriptConditional,javaScriptRepeat,javaScriptBranch,javaScriptOperator
-  syn cluster xulJavaScriptIn add=javaScriptType,javaScriptStatement,javaScriptBoolean,javaScriptNull,javaScriptIdentifier
-  syn cluster xulJavaScriptIn add=javaScriptLabel,javaScriptException,javaScriptMessage,javaScriptGlobal,javaScriptMember
-  syn cluster xulJavaScriptIn add=javaScriptDeprecated,javaScriptReserved
-
 endif
+
+" set a javascript cluster special for xulScriptIn, Warning: it doesn't
+" contain all the elements in javascript.vim
+syn cluster xulJavaScriptIn add=javaScriptCommentTodo,javaScriptLineComment,javaScriptCommentSkip,javaScriptComment,javaScriptSpecial
+syn cluster xulJavaScriptIn add=javaScriptSpecialCharacter,javaScriptNumber,javaScriptRegexpString
+syn cluster xulJavaScriptIn add=javaScriptConditional,javaScriptRepeat,javaScriptBranch,javaScriptOperator
+syn cluster xulJavaScriptIn add=javaScriptType,javaScriptStatement,javaScriptBoolean,javaScriptNull,javaScriptIdentifier
+syn cluster xulJavaScriptIn add=javaScriptLabel,javaScriptException,javaScriptMessage,javaScriptGlobal,javaScriptMember
+syn cluster xulJavaScriptIn add=javaScriptDeprecated,javaScriptReserved
+
 
 unlet b:current_syntax
 if version < 600
