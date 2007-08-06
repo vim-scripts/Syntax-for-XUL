@@ -1,5 +1,6 @@
 " Vim synatx file
 " Language:     XUL
+" Version:	0.35
 " Maintainer:   Miguel Rodriguez <lmrodriguezr@unal.edu.co>
 " 		Based on xul.vim v0.5 from
 " 		Nikolai Nespor <nikolai.nespor@utanet.at>	
@@ -10,22 +11,27 @@
 "		- A lot of new XUL-Keywords and ATTs
 "		- Shows attributes syntax by default
 "		- Special Attribute xulDev created for debug
-" Bugs:		- 1 bug! at XUL-Script :(
+" Bugs:		- 2 bugs! at XUL-Script :(
 " URL:          http://bioinf.ibun.unal.edu.co/~miguel/scripts/xul.vim
 " 		Nikolai's script:
 " 		http://www.unet.univie.ac.at/~a9600989/vim/xul.vim (not longer exists)
 " Last Change:  2007 06 28 (Miguel's last change)
 " 		2005 02 22 (Nikolai's last change)
 " Remarks:      Adds XUL-Highlighting (based on docbk.vim)
-"               If you DON'T want XUL-Attribute-Highlighting put a line
-"               like this:
+"               If you DON'T want XUL-Attribute-Highlighting (only common
+"               attributes are highlighted) put a line like this:
 "               
 "               let nohl_xul_atts = 1
 "
-"               in your $HOME/.vimrc. Only common attributes are
-"               highlighted
+"               If you don't want to be forced to close the script tag with
+"               </script> (which have a bug), put a line like this:
+"
+"               let xul_noclose_script = 1
+"
+"               in your $HOME/.vimrc file.
 "
 "
+
 
 " Backward compatibility
 "
@@ -57,14 +63,22 @@ syn cluster xmlTagHook add=xulKW
 " XUL-Script
 " 
 syn cluster xmlRegionHook add=xulScript
-syn region xulScript start=+<script[^>]*>+ keepend end=+</script>+me=s-1 contains=@xulJavaScript,scriptTag,openScriptTag
-syn match openScriptTag "^<" contained
+if !exists("g:xul_noclose_script")
+   syn region xulScript start=+<script[^>]*>+ keepend end=+</script>+me=s-1 contains=openScriptTag,@xulJavaScript,scriptTag
+else
+   syn region xulScript start=+<script[^/>]*>+ keepend end=+</script>+me=s-1 contains=openScriptTag,@xulJavaScript,scriptTag
+endif
+syn match openScriptTag "<" contained
 " Bug: When one types </script> inside script (into an String, for
-" instance) it matches and closes the script, but xul won't close it.  Again,
-" any ideas?
+" instance) it matches and closes the script, but xul won't close it.  Ideas?
+" Bug: When one types / inside script it doesn't play the script game (with
+" js).  Solution would be remove / from <script[^/>]*>, but then the script
+" tag without closer tag (finished in />) is highlighted as a js container and
+" crashes everything from then on. (only if xul_close_script is set).
 syn region scriptTag start=+<script+lc=1 end=+>+ contained contains=xmlError,xmlTagName,xmlAttrib,xmlEqual,xmlString,@xmlStartTagHook
 XulHiLink scriptTag xmlTag
 XulHiLink openScriptTag xmlTag
+XulHiLink xulScript Special
 
 " if attribute highlighting is NOT disabled
 "
